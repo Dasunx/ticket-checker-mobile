@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ticket_checker_app/screens/auth/login_screen.dart';
+import 'package:ticket_checker_app/screens/home_screen.dart';
 import 'package:ticket_checker_app/screens/welcome_screen.dart';
 
 class Routing {
@@ -11,6 +12,11 @@ class Routing {
         return MaterialPageRoute(builder: (_) => WelcomeScreen());
       case LoginScreen.id:
         return MaterialPageRoute(builder: (_) => LoginScreen());
+      case HomeScreen.id:
+        return MaterialPageRoute(
+            builder: (_) => HomeScreen(
+                  manager: arguments,
+                ));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

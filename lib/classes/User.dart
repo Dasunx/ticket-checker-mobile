@@ -4,7 +4,6 @@ class User {
   String role;
   String email;
   String token;
-  double balance;
 
   User(this.userId, this.email, this.name, this.role, this.token);
   User.w();
@@ -14,7 +13,6 @@ class User {
         'name': name,
         'role': role,
         'token': token,
-        'balance': balance
       };
 
   User.userFromJson(Map<String, dynamic> json)
@@ -22,8 +20,7 @@ class User {
         email = json['user']['email'],
         name = json['user']['name'],
         role = json['user']['role'],
-        token = json['token'],
-        balance = double.parse(json['user']['balance'].toString());
+        token = json['token'];
 
   User.managerFromJson(Map<String, dynamic> json)
       : userId = json['_id'],

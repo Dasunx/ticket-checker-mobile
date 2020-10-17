@@ -12,6 +12,9 @@ class UserDetails {
   List<Journey> travelHistory;
   double fineBalance;
   List<Fine> fineHistory;
+  String name;
+  String nic;
+  String userId;
 
   UserDetails(
       this.balance,
@@ -20,7 +23,10 @@ class UserDetails {
       this.onGoingJourney,
       this.travelHistory,
       this.fineBalance,
-      this.fineHistory);
+      this.fineHistory,
+      this.name,
+      this.nic,
+      this.userId);
 }
 
 Future<UserDetails> userDetailsFromJson(var json) async {
@@ -31,6 +37,8 @@ Future<UserDetails> userDetailsFromJson(var json) async {
   List<Fine> fineHistory;
   double balance = double.parse(json['balance'].toString());
   bool ongoing = json['ongoing'];
+  String nic = json['nic'];
+  String name = json['name'];
   double fineBalance = double.parse(json['fineBalance'].toString());
   if (ongoing) {
     print(json['journey']);
@@ -38,11 +46,21 @@ Future<UserDetails> userDetailsFromJson(var json) async {
   } else {
     onGoingJourney = null;
   }
+  String userId = json['_id'];
   paymentHistory = paymentListFromJson(json["paymentHistory"]);
   travelHistory = journeyListFromJson(json['journeyHistory']);
   fineHistory = fineListFromJson(json['fineHistory']);
-  userDetails = new UserDetails(balance, paymentHistory, ongoing,
-      onGoingJourney, travelHistory, fineBalance, fineHistory);
+  userDetails = new UserDetails(
+      balance,
+      paymentHistory,
+      ongoing,
+      onGoingJourney,
+      travelHistory,
+      fineBalance,
+      fineHistory,
+      name,
+      nic,
+      userId);
 
   return userDetails;
 }
