@@ -41,15 +41,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       appBar: AppBar(
         title: Text('Welcome screen'),
       ),
-      body: Container(
-        child: Center(
-          child: GestureDetector(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
             onTap: () {
               Navigator.pushNamed(context, LoginScreen.id);
             },
-            child: Text('Login'),
+            child: Container(
+              margin: EdgeInsets.all(50),
+              height: 60,
+              color: Colors.red,
+              child: Center(
+                child: Text('Login'),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
