@@ -266,26 +266,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   await login(email, password, context);
                                 },
                               ),
-                              FlatButton(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 34, vertical: 8),
-                                color: Colors.blue,
-                                child: Text(
-                                  "create Local account",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                onPressed: () {},
-                              ),
-                              FlatButton(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 8),
-                                color: Colors.blue,
-                                child: Text(
-                                  "create Foreigner account",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                onPressed: () {},
-                              )
                             ],
                           ),
                         ),

@@ -44,8 +44,16 @@ class _FineHistoryState extends State<FineHistory> {
     setState(() {
       isLoading = false;
     });
-    paidItems = fines.where((element) => element.paid == true).toList();
-    currentItems = fines.where((element) => element.paid == false).toList();
+    paidItems = fines
+        .where((element) => element.paid == true)
+        .toList()
+        .reversed
+        .toList();
+    currentItems = fines
+        .where((element) => element.paid == false)
+        .toList()
+        .reversed
+        .toList();
     return fines;
   }
 
@@ -56,8 +64,16 @@ class _FineHistoryState extends State<FineHistory> {
     List<Fine> tempItems = await loadFines();
     setState(() {
       items = tempItems;
-      paidItems = items.where((element) => element.paid == true).toList();
-      currentItems = items.where((element) => element.paid == false).toList();
+      paidItems = items
+          .where((element) => element.paid == true)
+          .toList()
+          .reversed
+          .toList();
+      currentItems = items
+          .where((element) => element.paid == false)
+          .toList()
+          .reversed
+          .toList();
     });
   }
 
