@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoaded = false;
   bool processing = false;
   double fineAmount;
-  String url = "http://192.168.8.101:8000/api/auth/me/";
+  String url = "https://urbanticket.herokuapp.com/api/auth/me/";
   DateTime loadedDate = DateTime.now();
   loadUserDetails(userID) async {
     setState(() {
@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
       var qrResult = await BarcodeScanner.scan();
 
       if (qrResult.type.toString() != 'Cancelled') {
-        await loadUserDetails(qrResult.toString());
+        await loadUserDetails(qrResult.rawContent);
       } else {
         print("No data");
       }
@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
   assignFine(amount) async {
     try {
       http.Response response = await http.post(
-          'http://192.168.8.101:8000/api/fine/add-fine',
+          'https://urbanticket.herokuapp.com/api/fine/add-fine',
           headers: <String, String>{
             'Content-Type': 'application/json',
           },
@@ -222,58 +222,76 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         height: (height / 10) * 2,
                         child: Card(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 20.0, left: 20, right: 20),
-                                child: TextField(
-                                    autofocus: false,
-                                    focusNode: newFocusNode,
-                                    onChanged: (v) {
-                                      setState(() {
-                                        fineAmount = double.parse(v);
-                                      });
-                                    },
-                                    decoration: InputDecoration(
-                                      errorText: error ? errorText : null,
-                                      prefixIcon: Icon(
-                                        Icons.attach_money,
-                                        color: Colors.blue,
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.blue, width: 2)),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.grey, width: 1)),
-                                      border: OutlineInputBorder(),
-                                      labelText: "Fine Amount",
-                                      hintStyle: TextStyle(
-                                        color: Colors.blue[400],
-                                      ),
-                                    )),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 20.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                          child: !userDetails.ongoing ||
+                                  userDetails.balance <= 0
+                              ? Column(
                                   children: [
-                                    RaisedButton(
-                                      onPressed: () async {
-                                        if (fineAmount > 0) {
-                                          await assignFine(fineAmount);
-                                        }
-                                      },
-                                      color: Colors.blue,
-                                      child: Text("Assign Fine"),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 20.0, left: 20, right: 20),
+                                      child: TextField(
+                                          autofocus: false,
+                                          focusNode: newFocusNode,
+                                          onChanged: (v) {
+                                            setState(() {
+                                              fineAmount = double.parse(v);
+                                            });
+                                          },
+                                          decoration: InputDecoration(
+                                            errorText: error ? errorText : null,
+                                            prefixIcon: Icon(
+                                              Icons.attach_money,
+                                              color: Colors.blue,
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.blue,
+                                                    width: 2)),
+                                            enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.grey,
+                                                    width: 1)),
+                                            border: OutlineInputBorder(),
+                                            labelText: "Fine Amount",
+                                            hintStyle: TextStyle(
+                                              color: Colors.blue[400],
+                                            ),
+                                          )),
                                     ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 20.0),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          RaisedButton(
+                                            onPressed: () async {
+                                              if (fineAmount > 0) {
+                                                await assignFine(fineAmount);
+                                              }
+                                            },
+                                            color: Colors.blue,
+                                            child: Text("Assign Fine"),
+                                          ),
+                                        ],
+                                      ),
+                                    )
                                   ],
-                                ),
-                              )
-                            ],
-                          ),
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                      Text(
+                                          "This passenger is on a trip and have balance to pay"),
+                                      Text(
+                                        'You cannot assign a fine for this user',
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.red),
+                                      )
+                                    ]),
                         ),
                       ),
                       Container(
@@ -396,8 +414,41 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color: Colors.black45,
                                     child: userDetails.ongoing
                                         ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
                                             children: [
-                                              Text("Starting from : ")
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Chip(
+                                                      avatar: CircleAvatar(
+                                                        radius: 40,
+                                                        backgroundColor:
+                                                            Colors.black,
+                                                        child: Icon(
+                                                          Icons.perm_identity,
+                                                          color: Colors.green,
+                                                        ),
+                                                      ),
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                      label: Text(
+                                                        'Ongoing journey:',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      )),
+                                                ],
+                                              ),
+                                              Text(
+                                                '${userDetails.onGoingJourney.startingPlace}',
+                                                style: TextStyle(
+                                                    color: Colors.green,
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )
                                             ],
                                           )
                                         : Row(
@@ -416,6 +467,48 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                   ),
                                   height: height / 10,
+                                ),
+                                Container(
+                                  margin: EdgeInsets.all(4),
+                                  width: width,
+                                  child: Card(
+                                    color: Colors.black45,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Completed journeys : ${userDetails.travelHistory.length}',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  height: height / 10,
+                                ),
+                                Container(
+                                  margin: EdgeInsets.all(4),
+                                  width: width,
+                                  child: Card(
+                                    color: Colors.black45,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Previous fines: ${userDetails.fineHistory.length}',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  height: height / 10,
                                 )
                               ],
                             ),
@@ -427,18 +520,18 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         floatingActionButton: FloatingActionButton.extended(
-          // onPressed: _scanQR,
-          //todo remove above comment
-          onPressed: () async {
-            await loadUserDetails("5f8681a637df4c60c4e59203");
-          },
+          onPressed: _scanQR,
+          // //todo remove above comment
+          // onPressed: () async {
+          //   await loadUserDetails("5f8681a637df4c60c4e59203");
+          // },
           label: Text(
             "Scan user",
             style: TextStyle(fontSize: 16),
           ),
           icon: Icon(Icons.camera_enhance),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         drawer: CustomDrawer(
           user: widget.manager,
         ),

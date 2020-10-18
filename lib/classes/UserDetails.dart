@@ -97,3 +97,17 @@ List<Fine> fineListFromJson(var json) {
   });
   return fineList;
 }
+
+List<Fine> managerFineListFromJson(var json) {
+  List<Fine> fineList = new List<Fine>();
+  json.forEach((ele) {
+    if (ele['paid'] == true) {
+      Fine f = new Fine.userPaidfromJson(ele);
+      fineList.add(f);
+    } else {
+      Fine f = new Fine.userUnPaidFinefromJson(ele);
+      fineList.add(f);
+    }
+  });
+  return fineList;
+}
