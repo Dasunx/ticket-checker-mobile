@@ -8,6 +8,7 @@ import 'package:ticket_checker_app/classes/SharedPref.dart';
 import 'package:ticket_checker_app/classes/User.dart';
 
 import 'package:ticket_checker_app/screens/auth/login_screen.dart';
+import 'package:ticket_checker_app/screens/fines/fine_history.dart';
 import 'package:ticket_checker_app/screens/home_screen.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -130,6 +131,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       // ),
                       // color: Colors.white,
                     ),
+                  ),
+                  DrawerListTile(
+                    title: 'Assigned fines',
+                    onPress: () {
+                      Navigator.pushNamed(context, FineHistory.id,
+                          arguments: widget.user);
+                    },
+                    icon: Icons.line_style,
                   ),
                 ],
               ),

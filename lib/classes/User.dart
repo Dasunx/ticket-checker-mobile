@@ -19,8 +19,7 @@ class User {
       : userId = json['user']['_id'],
         email = json['user']['email'],
         name = json['user']['name'],
-        role = json['user']['role'],
-        token = json['token'];
+        role = json['user']['role'];
 
   User.managerFromJson(Map<String, dynamic> json)
       : userId = json['_id'],
